@@ -1,11 +1,11 @@
 package li.cil.sp.container;
 
+import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 
 public class SteamWaterCollectorContainer extends Container {
     protected SteamWaterCollectorTileEntity tileEntity;
@@ -24,6 +24,7 @@ public class SteamWaterCollectorContainer extends Container {
         //commonly used vanilla code that adds the player's inventory
         bindPlayerInventory(inventoryPlayer);
     }
+
     protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
@@ -36,9 +37,10 @@ public class SteamWaterCollectorContainer extends Container {
             addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
         }
     }
+
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return tileEntity.isUseableByPlayer(player);
+        return true;
     }
 
     @Override

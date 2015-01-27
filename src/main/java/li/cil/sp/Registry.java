@@ -18,6 +18,7 @@ public class Registry {
             return Items.brick;
         }
     };
+
     public static final Block steamPump = new SteamWaterCollectorBlock(Material.iron)
             .setHardness(5f)
             .setStepSound(Block.soundTypeMetal)
@@ -29,6 +30,5 @@ public class Registry {
         GameRegistry.registerBlock(steamPump, "steamPump");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(SteamPowered.instance, new GuiHandler());
-
     }
 }

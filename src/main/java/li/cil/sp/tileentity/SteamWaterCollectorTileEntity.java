@@ -2,76 +2,70 @@ package li.cil.sp.tileentity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
-public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidHandler, IInventory {
+public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidHandler {
+    private static final int STEAM_PER_OPERATION = 2;
+    private static final int WATER_PER_SOURCE = 10;
+    private static final int UPDATE_DELAY = 5;
 
-    FluidTank inputTank;
-    FluidTank outputTank;
-    private static final int workAmount = 2;
-    private static final int productionAmount = 10;
+    private final FluidTank inputTank = new FluidTank(16000);
+    private final FluidTank outputTank = new FluidTank(16000);
 
-    private int sourceBlocks = -1;
-
-    public final int getOffsetX(byte aSide) {
-        return this.xCoord + ForgeDirection.getOrientation(aSide).offsetX;
-    }
-
-    public final short getOffsetY(byte aSide) {
-        return (short) (this.yCoord + ForgeDirection.getOrientation(aSide).offsetY);
-    }
-
-    public final int getOffsetZ(byte aSide) {
-        return this.zCoord + ForgeDirection.getOrientation(aSide).offsetZ;
-    }
+    private int ticksUntilUpdate = UPDATE_DELAY;
+    private int sourceBlockCount = 0;
 
     public SteamWaterCollectorTileEntity() {
-        inputTank = new FluidTank(16000);
-        outputTank = new FluidTank(16000);
-        sourceBlocks = -1;
-
-    }
-
-
-    @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound) {
-        super.writeToNBT(nbtTagCompound);
-        inputTank.writeToNBT(nbtTagCompound);
-        outputTank.writeToNBT(nbtTagCompound);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbtTagCompound) {
-        super.readFromNBT(nbtTagCompound);
-        inputTank.readFromNBT(nbtTagCompound);
-        outputTank.readFromNBT(nbtTagCompound);
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+
+        final NBTTagCompound inputNbt = new NBTTagCompound();
+        inputTank.writeToNBT(inputNbt);
+        nbt.setTag("inputTank", inputNbt);
+
+        final NBTTagCompound outputNbt = new NBTTagCompound();
+        outputTank.writeToNBT(outputNbt);
+        nbt.setTag("outputTank", outputNbt);
     }
 
-     public void notifyNeighourChange(){
-         sourceBlocks = -1;
-     }
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
 
-    public void recalculateNeighbours() {
-        sourceBlocks = 0;
-        for (byte side = 0; side < 7; side++) {
-            Block block = worldObj.getBlock(getOffsetX(side), getOffsetY(side), getOffsetZ(side));
-            if (block != null)
-                if (block instanceof BlockLiquid)
-                    if (worldObj.getBlockMetadata(getOffsetX(side), getOffsetY(side), getOffsetZ(side)) == 0) {
-                        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-                        if (fluid != null && fluid.equals(FluidRegistry.WATER)) {
-                            sourceBlocks++;
-                        }
-                    }
+        inputTank.readFromNBT(nbt.getCompoundTag("inputTank"));
+        outputTank.readFromNBT(nbt.getCompoundTag("outputTank"));
+    }
+
+    public void onNeighourChange() {
+        ticksUntilUpdate = UPDATE_DELAY;
+    }
+
+    private void recalculateNeighbours() {
+        sourceBlockCount = 0;
+        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+            final int x = xCoord + side.offsetX;
+            final int y = yCoord + side.offsetY;
+            final int z = zCoord + side.offsetZ;
+            final Block block = worldObj.getBlock(x, y, z);
+            if (block instanceof BlockLiquid && getWorldObj().getBlockMetadata(x, y, z) == 0) {
+                final Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+                if (fluid != null && fluid == FluidRegistry.WATER)
+                    sourceBlockCount++;
+            }
         }
-        System.out.println(sourceBlocks);
+        // TODO REMOVE THIS
+        System.out.println(sourceBlockCount);
     }
 
     @Override
@@ -90,23 +84,24 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
 
             }
         }
-        if (sourceBlocks == -1)
-            recalculateNeighbours();
-        if (sourceBlocks == 0)
-            return;
-        if ((outputTank.getCapacity() - outputTank.getFluidAmount()) < productionAmount) {
-            return;
+
+        if (ticksUntilUpdate > 0) {
+            --ticksUntilUpdate;
+            if (ticksUntilUpdate == 0) {
+                recalculateNeighbours();
+            }
         }
 
-        if (inputTank.getFluidAmount() < workAmount) {
-            return;
+        if (sourceBlockCount > 0 && // Anything to pull from?
+                inputTank.getFluidAmount() >= STEAM_PER_OPERATION && // Any power to use?
+                outputTank.getFluidAmount() < outputTank.getCapacity()) // Any room to put it?
+        {
+            inputTank.drain(STEAM_PER_OPERATION, true);
+            outputTank.fill(new FluidStack(FluidRegistry.WATER, WATER_PER_SOURCE * sourceBlockCount), true);
+
+            // TODO REMOVE THIS
+            System.out.println(outputTank.getFluidAmount());
         }
-
-
-
-        inputTank.drain(workAmount, true);
-        outputTank.fill(new FluidStack(FluidRegistry.WATER.getID(), productionAmount * workAmount), true);
-        System.out.println(outputTank.getInfo().fluid.amount);
     }
 
     public int getWaterAmount() {
@@ -118,15 +113,15 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     }
 
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        if (canFill(from, resource.getFluid()))
-            return inputTank.fill(resource, doFill);
+    public int fill(ForgeDirection from, FluidStack stack, boolean doFill) {
+        if (canFill(from, stack.getFluid()))
+            return inputTank.fill(stack, doFill);
         return 0;
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        return outputTank.drain(resource.amount, doDrain);
+    public FluidStack drain(ForgeDirection from, FluidStack stack, boolean doDrain) {
+        return outputTank.drain(stack.amount, doDrain);
     }
 
     @Override
@@ -136,78 +131,16 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
-        return fluid.equals(FluidRegistry.getFluid("steam"));
+        return fluid == FluidRegistry.getFluid("steam");
     }
 
     @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        return outputTank.getFluid().fluidID == fluid.getID();
+        return outputTank.getFluid().getFluid() == fluid;
     }
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
         return new FluidTankInfo[]{outputTank.getInfo(), inputTank.getInfo()};
-    }
-
-    @Override
-    public int getSizeInventory() {
-        return 0;
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int p_70301_1_) {
-        return new ItemStack(Items.diamond);
-    }
-
-    @Override
-    public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
-        return null;
-    }
-
-    @Override
-    public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
-        return null;
-    }
-
-    @Override
-    public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
-
-    }
-
-    @Override
-    public String getInventoryName() {
-        return null;
-    }
-
-    @Override
-    public boolean hasCustomInventoryName() {
-        return false;
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 0;
-    }
-
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this &&
-                player.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5) < 64;
-    }
-
-
-    @Override
-    public void openInventory() {
-
-    }
-
-    @Override
-    public void closeInventory() {
-
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
-        return false;
     }
 }

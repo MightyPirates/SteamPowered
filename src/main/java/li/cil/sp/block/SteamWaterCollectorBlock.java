@@ -1,14 +1,12 @@
 package li.cil.sp.block;
 
-
 import li.cil.sp.SteamPowered;
+import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 
 public class SteamWaterCollectorBlock extends Block {
     public SteamWaterCollectorBlock(Material material) {
@@ -16,13 +14,13 @@ public class SteamWaterCollectorBlock extends Block {
     }
 
     @Override
-    public TileEntity createTileEntity(World world, int metadata) {
-        return new SteamWaterCollectorTileEntity();
+    public boolean hasTileEntity(int metadata) {
+        return true;
     }
 
     @Override
-    public boolean hasTileEntity(int metadata) {
-        return true;
+    public TileEntity createTileEntity(World world, int metadata) {
+        return new SteamWaterCollectorTileEntity();
     }
 
     @Override
@@ -41,8 +39,8 @@ public class SteamWaterCollectorBlock extends Block {
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         super.onNeighborBlockChange(world, x, y, z, block);
         TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if(tileEntity!=null&&tileEntity instanceof SteamWaterCollectorTileEntity){
-            ((SteamWaterCollectorTileEntity) tileEntity).notifyNeighourChange();
+        if (tileEntity != null && tileEntity instanceof SteamWaterCollectorTileEntity) {
+            ((SteamWaterCollectorTileEntity) tileEntity).onNeighourChange();
         }
     }
 }

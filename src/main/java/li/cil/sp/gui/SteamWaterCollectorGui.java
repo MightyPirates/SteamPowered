@@ -12,7 +12,7 @@ public class SteamWaterCollectorGui extends GuiContainer {
 
     public SteamWaterCollectorGui(InventoryPlayer inventoryPlayer,
                                   SteamWaterCollectorTileEntity tileEntity) {
-        //the container is instanciated and passed to the superclass for handling
+        //the container is instantiated and passed to the superclass for handling
         super(new SteamWaterCollectorContainer(inventoryPlayer, tileEntity));
         this.tileEntity = tileEntity;
     }
@@ -45,6 +45,5 @@ public class SteamWaterCollectorGui extends GuiContainer {
 
         int tScale = Math.min(54, Math.max(10, tileEntity.getWaterAmount() * 54 / 16000));
         drawTexturedModalRect(x + 70, y + 25 + 54 - tScale, 194, 54 - tScale, 10, tScale);
-
     }
 }
