@@ -1,12 +1,11 @@
-package steampump.gui;
+package li.cil.sp.gui;
 
+import li.cil.sp.container.SteamWaterCollectorContainer;
+import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import steampump.container.SteamWaterCollectorContainer;
-import steampump.tileentity.SteamWaterCollectorTileEntity;
 
 public class SteamWaterCollectorGui extends GuiContainer {
     private SteamWaterCollectorTileEntity tileEntity;

@@ -1,15 +1,15 @@
-package steampump;
+package li.cil.sp;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import li.cil.sp.block.SteamWaterCollectorBlock;
+import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import steampump.block.SteamWaterCollectorBlock;
-import steampump.gui.GuiHandler;
-import steampump.tileentity.SteamWaterCollectorTileEntity;
+import li.cil.sp.gui.GuiHandler;
 
 public class Registry {
     public static final CreativeTabs tab = new CreativeTabs(CreativeTabs.getNextID(), "Steam Pump") {

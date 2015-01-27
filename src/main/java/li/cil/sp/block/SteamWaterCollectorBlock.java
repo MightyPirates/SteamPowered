@@ -1,12 +1,12 @@
-package steampump.block;
+package li.cil.sp.block;
 
+import li.cil.sp.SteamWaterCollector;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import steampump.SteamWaterCollector;
-import steampump.tileentity.SteamWaterCollectorTileEntity;
+import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 
 public class SteamWaterCollectorBlock extends Block {
     public SteamWaterCollectorBlock(Material material) {

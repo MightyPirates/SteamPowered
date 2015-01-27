@@ -1,11 +1,11 @@
-package steampump.gui;
+package li.cil.sp.gui;
 
 import cpw.mods.fml.common.network.IGuiHandler;
+import li.cil.sp.container.SteamWaterCollectorContainer;
+import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import steampump.container.SteamWaterCollectorContainer;
-import steampump.tileentity.SteamWaterCollectorTileEntity;
 
 public class GuiHandler implements IGuiHandler {
     @Override

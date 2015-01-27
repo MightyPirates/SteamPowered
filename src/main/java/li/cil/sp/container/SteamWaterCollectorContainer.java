@@ -1,11 +1,11 @@
-package steampump.container;
+package li.cil.sp.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import steampump.tileentity.SteamWaterCollectorTileEntity;
+import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 
 public class SteamWaterCollectorContainer extends Container {
     protected SteamWaterCollectorTileEntity tileEntity;

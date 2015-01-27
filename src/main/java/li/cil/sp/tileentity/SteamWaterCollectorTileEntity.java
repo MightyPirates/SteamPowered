@@ -1,4 +1,4 @@
-package steampump.tileentity;
+package li.cil.sp.tileentity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;

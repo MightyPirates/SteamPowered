@@ -1,9 +1,7 @@
-package steampump;
+package li.cil.sp;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import steampump.gui.GuiHandler;
 
 @Mod(modid = SteamWaterCollector.MODID, version = SteamWaterCollector.VERSION)
 public class SteamWaterCollector {
