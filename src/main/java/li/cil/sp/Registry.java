@@ -3,13 +3,13 @@ package li.cil.sp;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import li.cil.sp.block.SteamWaterCollectorBlock;
+import li.cil.sp.gui.GuiHandler;
 import li.cil.sp.tileentity.SteamWaterCollectorTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import li.cil.sp.gui.GuiHandler;
 
 public class Registry {
     public static final CreativeTabs tab = new CreativeTabs(CreativeTabs.getNextID(), "Steam Pump") {
@@ -28,7 +28,7 @@ public class Registry {
         GameRegistry.registerTileEntity(SteamWaterCollectorTileEntity.class, "steamPump");
         GameRegistry.registerBlock(steamPump, "steamPump");
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(SteamWaterCollector.instance, new GuiHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(SteamPowered.instance, new GuiHandler());
 
     }
 }

@@ -5,14 +5,11 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
-
-import java.util.Map;
 
 public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidHandler, IInventory {
 
@@ -20,6 +17,8 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     FluidTank outputTank;
     private static final int workAmount = 2;
     private static final int productionAmount = 10;
+
+    private int sourceBlocks = -1;
 
     public final int getOffsetX(byte aSide) {
         return this.xCoord + ForgeDirection.getOrientation(aSide).offsetX;
@@ -36,7 +35,7 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     public SteamWaterCollectorTileEntity() {
         inputTank = new FluidTank(16000);
         outputTank = new FluidTank(16000);
-
+        sourceBlocks = -1;
 
     }
 
@@ -55,6 +54,26 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
         outputTank.readFromNBT(nbtTagCompound);
     }
 
+     public void notifyNeighourChange(){
+         sourceBlocks = -1;
+     }
+
+    public void recalculateNeighbours() {
+        sourceBlocks = 0;
+        for (byte side = 0; side < 7; side++) {
+            Block block = worldObj.getBlock(getOffsetX(side), getOffsetY(side), getOffsetZ(side));
+            if (block != null)
+                if (block instanceof BlockLiquid)
+                    if (worldObj.getBlockMetadata(getOffsetX(side), getOffsetY(side), getOffsetZ(side)) == 0) {
+                        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+                        if (fluid != null && fluid.equals(FluidRegistry.WATER)) {
+                            sourceBlocks++;
+                        }
+                    }
+        }
+        System.out.println(sourceBlocks);
+    }
+
     @Override
     public void updateEntity() {
         super.updateEntity();
@@ -71,7 +90,10 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
 
             }
         }
-
+        if (sourceBlocks == -1)
+            recalculateNeighbours();
+        if (sourceBlocks == 0)
+            return;
         if ((outputTank.getCapacity() - outputTank.getFluidAmount()) < productionAmount) {
             return;
         }
@@ -79,20 +101,9 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
         if (inputTank.getFluidAmount() < workAmount) {
             return;
         }
-        int sourceBlocks = 0;
-        for (byte side = 0; side < 7; side++) {
-            Block block = worldObj.getBlock(getOffsetX(side), getOffsetY(side), getOffsetZ(side));
-            if (block != null)
-                if (block instanceof BlockLiquid)
-                    if (worldObj.getBlockMetadata(getOffsetX(side), getOffsetY(side), getOffsetZ(side)) == 0) {
-                        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-                        if (fluid != null && fluid.equals(FluidRegistry.WATER)) {
-                            sourceBlocks++;
-                        }
-                    }
-        }
-        if (sourceBlocks == 0)
-            return;
+
+
+
         inputTank.drain(workAmount, true);
         outputTank.fill(new FluidStack(FluidRegistry.WATER.getID(), productionAmount * workAmount), true);
         System.out.println(outputTank.getInfo().fluid.amount);
@@ -101,6 +112,7 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     public int getWaterAmount() {
         return outputTank.getFluidAmount();
     }
+
     public int getSteamAmount() {
         return inputTank.getFluidAmount();
     }
