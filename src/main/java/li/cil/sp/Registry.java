@@ -12,22 +12,22 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 
 public class Registry {
-    public static final CreativeTabs tab = new CreativeTabs(CreativeTabs.getNextID(), "Steam Pump") {
+    public static final CreativeTabs tab = new CreativeTabs(CreativeTabs.getNextID(), "Steam Water Collector") {
         @Override
         public Item getTabIconItem() {
             return Items.brick;
         }
     };
 
-    public static final Block steamPump = new SteamWaterCollectorBlock(Material.iron)
+    public static final Block steamWaterCollector = new SteamWaterCollectorBlock(Material.iron)
             .setHardness(5f)
             .setStepSound(Block.soundTypeMetal)
-            .setBlockName("steamPump")
+            .setBlockName("steamWaterCollector")
             .setCreativeTab(tab);
 
     public static void init() {
-        GameRegistry.registerTileEntity(SteamWaterCollectorTileEntity.class, "steamPump");
-        GameRegistry.registerBlock(steamPump, "steamPump");
+        GameRegistry.registerTileEntity(SteamWaterCollectorTileEntity.class, "steamWaterCollector");
+        GameRegistry.registerBlock(steamWaterCollector, "steamWaterCollector");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(SteamPowered.instance, new GuiHandler());
     }

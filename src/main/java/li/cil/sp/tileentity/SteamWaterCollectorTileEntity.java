@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidHandler {
     private static final int STEAM_PER_OPERATION = 2;
     private static final int WATER_PER_SOURCE = 10;
-    private static final int UPDATE_DELAY = 5;
+    private static final int UPDATE_DELAY = 10;
 
     private final FluidTank inputTank = new FluidTank(16000);
     private final FluidTank outputTank = new FluidTank(16000);
@@ -64,8 +64,6 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
                     sourceBlockCount++;
             }
         }
-        // TODO REMOVE THIS
-        System.out.println(sourceBlockCount);
     }
 
     @Override
@@ -87,6 +85,7 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
 
         if (ticksUntilUpdate > 0) {
             --ticksUntilUpdate;
+
             if (ticksUntilUpdate == 0) {
                 recalculateNeighbours();
             }
@@ -94,13 +93,11 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
 
         if (sourceBlockCount > 0 && // Anything to pull from?
                 inputTank.getFluidAmount() >= STEAM_PER_OPERATION && // Any power to use?
-                outputTank.getFluidAmount() < outputTank.getCapacity()) // Any room to put it?
+                outputTank.getFluidAmount()+WATER_PER_SOURCE < outputTank.getCapacity()) // Any room to put it?
         {
             inputTank.drain(STEAM_PER_OPERATION, true);
             outputTank.fill(new FluidStack(FluidRegistry.WATER, WATER_PER_SOURCE * sourceBlockCount), true);
 
-            // TODO REMOVE THIS
-            System.out.println(outputTank.getFluidAmount());
         }
     }
 
