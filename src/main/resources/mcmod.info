@@ -1,0 +1,12 @@
+[{
+  "modid": "steampowered",
+  "name": "SteamPowered",
+  "description": "A bunch of low-to-medium-tech machines powered by steam.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["Lord Joda", "Sangar"],
+  "requiredMods": [ "Forge@[10.13.0.1180,)" ],
+  "dependencies": [],
+  "dependants": [],
+  "useDependencyInformation": "true"
+}]
