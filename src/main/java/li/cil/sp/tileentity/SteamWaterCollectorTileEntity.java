@@ -12,12 +12,11 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidHandler {
+public class SteamWaterCollectorTileEntity extends AbstractSteamTileEntity {
     private static final int STEAM_PER_OPERATION = 2;
     private static final int WATER_PER_SOURCE = 10;
     private static final int UPDATE_DELAY = 10;
 
-    private final FluidTank inputTank = new FluidTank(16000);
     private final FluidTank outputTank = new FluidTank(16000);
 
     private int ticksUntilUpdate = UPDATE_DELAY;
@@ -30,9 +29,6 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
 
-        final NBTTagCompound inputNbt = new NBTTagCompound();
-        inputTank.writeToNBT(inputNbt);
-        nbt.setTag("inputTank", inputNbt);
 
         final NBTTagCompound outputNbt = new NBTTagCompound();
         outputTank.writeToNBT(outputNbt);
@@ -43,7 +39,6 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
 
-        inputTank.readFromNBT(nbt.getCompoundTag("inputTank"));
         outputTank.readFromNBT(nbt.getCompoundTag("outputTank"));
     }
 
@@ -92,10 +87,10 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
         }
 
         if (sourceBlockCount > 0 && // Anything to pull from?
-                inputTank.getFluidAmount() >= STEAM_PER_OPERATION && // Any power to use?
+                steamTank.getFluidAmount() >= STEAM_PER_OPERATION && // Any power to use?
                 outputTank.getFluidAmount()+WATER_PER_SOURCE < outputTank.getCapacity()) // Any room to put it?
         {
-            inputTank.drain(STEAM_PER_OPERATION, true);
+            steamTank.drain(STEAM_PER_OPERATION, true);
             outputTank.fill(new FluidStack(FluidRegistry.WATER, WATER_PER_SOURCE * sourceBlockCount), true);
 
         }
@@ -103,17 +98,6 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
 
     public int getWaterAmount() {
         return outputTank.getFluidAmount();
-    }
-
-    public int getSteamAmount() {
-        return inputTank.getFluidAmount();
-    }
-
-    @Override
-    public int fill(ForgeDirection from, FluidStack stack, boolean doFill) {
-        if (canFill(from, stack.getFluid()))
-            return inputTank.fill(stack, doFill);
-        return 0;
     }
 
     @Override
@@ -127,17 +111,12 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     }
 
     @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid) {
-        return fluid == FluidRegistry.getFluid("steam");
-    }
-
-    @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
         return outputTank.getFluid().getFluid() == fluid;
     }
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return new FluidTankInfo[]{outputTank.getInfo(), inputTank.getInfo()};
+        return new FluidTankInfo[]{outputTank.getInfo(), steamTank.getInfo()};
     }
 }
