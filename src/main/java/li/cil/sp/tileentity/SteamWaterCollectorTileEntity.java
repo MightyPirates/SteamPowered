@@ -26,7 +26,7 @@ public class SteamWaterCollectorTileEntity extends AbstractSteamTileEntity {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public void writeToNBT(final NBTTagCompound nbt) {
         super.writeToNBT(nbt);
 
 
@@ -36,7 +36,7 @@ public class SteamWaterCollectorTileEntity extends AbstractSteamTileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(final NBTTagCompound nbt) {
         super.readFromNBT(nbt);
 
         outputTank.readFromNBT(nbt.getCompoundTag("outputTank"));
@@ -64,6 +64,7 @@ public class SteamWaterCollectorTileEntity extends AbstractSteamTileEntity {
     @Override
     public void updateEntity() {
         super.updateEntity();
+
         if (outputTank.getFluidAmount() > 0) {
             TileEntity tileEntity = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
             if (tileEntity != null && tileEntity instanceof IFluidHandler) {
@@ -88,11 +89,10 @@ public class SteamWaterCollectorTileEntity extends AbstractSteamTileEntity {
 
         if (sourceBlockCount > 0 && // Anything to pull from?
                 steamTank.getFluidAmount() >= STEAM_PER_OPERATION && // Any power to use?
-                outputTank.getFluidAmount()+WATER_PER_SOURCE < outputTank.getCapacity()) // Any room to put it?
+                outputTank.getFluidAmount() + WATER_PER_SOURCE < outputTank.getCapacity()) // Any room to put it?
         {
             steamTank.drain(STEAM_PER_OPERATION, true);
             outputTank.fill(new FluidStack(FluidRegistry.WATER, WATER_PER_SOURCE * sourceBlockCount), true);
-
         }
     }
 
@@ -100,23 +100,25 @@ public class SteamWaterCollectorTileEntity extends AbstractSteamTileEntity {
         return outputTank.getFluidAmount();
     }
 
+
     @Override
-    public FluidStack drain(ForgeDirection from, FluidStack stack, boolean doDrain) {
+    public FluidStack drain(final ForgeDirection side, final FluidStack stack, final boolean doDrain) {
         return outputTank.drain(stack.amount, doDrain);
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return outputTank.drain(maxDrain, doDrain);
+    public FluidStack drain(final ForgeDirection side, final int maxAmount, final boolean doDrain) {
+        return outputTank.drain(maxAmount, doDrain);
     }
 
+
     @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid) {
+    public boolean canDrain(final ForgeDirection side, final Fluid fluid) {
         return outputTank.getFluid().getFluid() == fluid;
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+    public FluidTankInfo[] getTankInfo(final ForgeDirection side) {
         return new FluidTankInfo[]{outputTank.getInfo(), steamTank.getInfo()};
     }
 }

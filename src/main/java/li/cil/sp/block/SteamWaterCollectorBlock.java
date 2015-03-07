@@ -9,36 +9,34 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class SteamWaterCollectorBlock extends Block {
-    public SteamWaterCollectorBlock(Material material) {
+    public SteamWaterCollectorBlock(final Material material) {
         super(material);
     }
 
     @Override
-    public boolean hasTileEntity(int metadata) {
+    public boolean hasTileEntity(final int metadata) {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(World world, int metadata) {
+    public TileEntity createTileEntity(final World world, final int metadata) {
         return new SteamWaterCollectorTileEntity();
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z,
-                                    EntityPlayer player, int metadata, float what, float these, float are) {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
+    public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float htY, final float hitZ) {
+        final TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity == null || player.isSneaking()) {
             return false;
         }
-        //code to open gui explained later
         player.openGui(SteamPowered.instance, 0, world, x, y, z);
         return true;
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+    public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final Block block) {
         super.onNeighborBlockChange(world, x, y, z, block);
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        final TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity != null && tileEntity instanceof SteamWaterCollectorTileEntity) {
             ((SteamWaterCollectorTileEntity) tileEntity).onNeighourChange();
         }

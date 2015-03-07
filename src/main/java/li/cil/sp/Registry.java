@@ -21,10 +21,11 @@ public class Registry {
         }
     };
 
-    public static final Block steamWaterCollector = new SteamWaterCollectorBlock(Material.iron)
+    public static final Block SteamWaterCollector = new SteamWaterCollectorBlock(Material.iron)
             .setHardness(5f)
             .setStepSound(Block.soundTypeMetal)
             .setBlockName("steamWaterCollector")
+            .setBlockTextureName("steampowered:generic")
             .setCreativeTab(tab);
     public static final Block steamFluidTransposer = new SteamFluidTransposerBlock()
             .setHardness(5f)
@@ -34,7 +35,7 @@ public class Registry {
 
     public static void init() {
         GameRegistry.registerTileEntity(SteamWaterCollectorTileEntity.class, "steamWaterCollector");
-        GameRegistry.registerBlock(steamWaterCollector, "steamWaterCollector");
+        GameRegistry.registerBlock(SteamWaterCollector, "steamWaterCollector");
 
 
         GameRegistry.registerTileEntity(SteamFluidTransposerTileEntity.class, "steamFluidTransposer");
