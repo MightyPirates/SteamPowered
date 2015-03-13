@@ -72,7 +72,7 @@ public class BlockSteamWaterCollector extends Block {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        if (Util.isWrenchItem(player.getHeldItem())) {
+        if (!player.isSneaking() && Util.isWrenchItem(player.getHeldItem())) {
             final TileEntity tileEntity = world.getTileEntity(x, y, z);
             if (tileEntity instanceof TileEntitySteamWaterCollector) {
                 ((TileEntitySteamWaterCollector) tileEntity).updateFacing(side);
