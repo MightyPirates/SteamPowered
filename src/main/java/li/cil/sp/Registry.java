@@ -1,10 +1,8 @@
 package li.cil.sp;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import li.cil.sp.block.BlockSteamWaterCollector;
 import li.cil.sp.block.BlockSteamFluidTransposer;
-import li.cil.sp.gui.GuiHandler;
 import li.cil.sp.tileentity.TileEntitySteamFluidTransposer;
 import li.cil.sp.tileentity.TileEntitySteamWaterCollector;
 import net.minecraft.block.Block;
@@ -41,7 +39,5 @@ public class Registry {
 
         GameRegistry.registerTileEntity(TileEntitySteamFluidTransposer.class, "steamFluidTransposer");
         GameRegistry.registerBlock(STEAM_FLUID_TRANSPOSER, "steamFluidTransposer");
-
-        NetworkRegistry.INSTANCE.registerGuiHandler(SteamPowered.instance, new GuiHandler());
     }
 }

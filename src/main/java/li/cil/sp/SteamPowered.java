@@ -16,7 +16,7 @@ public class SteamPowered {
     @Mod.Instance
     public static SteamPowered instance;
 
-    @SidedProxy(clientSide = "li.cil.sp.proxy.Client", serverSide = "li.cil.sp.proxy.Common")
+    @SidedProxy(clientSide = "li.cil.sp.proxy.Client", serverSide = "li.cil.sp.proxy.Server")
     public static Common proxy;
 
     @Mod.EventHandler
