@@ -20,7 +20,6 @@ public class Registry {
             .setHardness(5f)
             .setStepSound(Block.soundTypeMetal)
             .setBlockName("steamWaterCollector")
-            .setBlockTextureName("steampowered:generic")
             .setCreativeTab(tab);
 
     public static final Block STEAM_FLUID_TRANSPOSER = new BlockSteamFluidTransposer()

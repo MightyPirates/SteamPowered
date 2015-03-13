@@ -1,16 +1,63 @@
 package li.cil.sp.block;
 
+import li.cil.sp.SteamPowered;
 import li.cil.sp.Util;
 import li.cil.sp.tileentity.TileEntitySteamWaterCollector;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockSteamWaterCollector extends Block {
+    private IIcon iconTop = null;
+    private IIcon icontTopOutput = null;
+    private IIcon iconSide = null;
+    private IIcon iconSideOutput = null;
+
     public BlockSteamWaterCollector(final Material material) {
         super(material);
+    }
+
+    @Override
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
+        final TileEntity tileEntity = world.getTileEntity(x, y, z);
+        final boolean isOutputSide = tileEntity instanceof TileEntitySteamWaterCollector && ((TileEntitySteamWaterCollector) tileEntity).getOutputSide().ordinal() == side;
+        final ForgeDirection direction = ForgeDirection.getOrientation(side);
+        switch (direction) {
+            case DOWN:
+            case UP:
+                if (isOutputSide) return icontTopOutput;
+                else return iconTop;
+            default:
+                if (isOutputSide) return iconSideOutput;
+                else return iconSide;
+        }
+    }
+
+    @Override
+    public IIcon getIcon(int side, int meta) {
+        final ForgeDirection direction = ForgeDirection.getOrientation(side);
+        switch (direction) {
+            case DOWN:
+            case UP:
+                return iconTop;
+            default:
+                if (side == ForgeDirection.SOUTH.ordinal()) return iconSideOutput;
+                else return iconSide;
+        }
+    }
+
+    @Override
+    public void registerBlockIcons(IIconRegister registry) {
+        iconTop = registry.registerIcon(SteamPowered.MOD_ID.toLowerCase() + ":collector_top");
+        icontTopOutput = registry.registerIcon(SteamPowered.MOD_ID.toLowerCase() + ":collector_top_output");
+        iconSide = registry.registerIcon(SteamPowered.MOD_ID.toLowerCase() + ":collector_side");
+        iconSideOutput = registry.registerIcon(SteamPowered.MOD_ID.toLowerCase() + ":collector_side_output");
     }
 
     @Override

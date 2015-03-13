@@ -23,6 +23,10 @@ public class TileEntitySteamWaterCollector extends TileEntitySteamPowered {
     private int ticksUntilUpdate = UPDATE_DELAY;
     private int sourceBlockCount = 0;
 
+    public ForgeDirection getOutputSide() {
+        return outputSide;
+    }
+
     public void updateFacing(int side) {
         final ForgeDirection direction = ForgeDirection.getOrientation(side);
         if (direction == outputSide) {
@@ -30,6 +34,7 @@ public class TileEntitySteamWaterCollector extends TileEntitySteamPowered {
         } else {
             outputSide = direction;
         }
+        getWorldObj().markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
