@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidHandler {
+public class TileEntitySteamWaterCollector extends TileEntity implements IFluidHandler {
     private static final int STEAM_PER_OPERATION = 2;
     private static final int WATER_PER_SOURCE = 10;
     private static final int UPDATE_DELAY = 10;
@@ -20,10 +20,17 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
     private final FluidTank inputTank = new FluidTank(16000);
     private final FluidTank outputTank = new FluidTank(16000);
 
+    private ForgeDirection outputSide = ForgeDirection.DOWN;
     private int ticksUntilUpdate = UPDATE_DELAY;
     private int sourceBlockCount = 0;
 
-    public SteamWaterCollectorTileEntity() {
+    public void updateFacing(int side) {
+        final ForgeDirection direction = ForgeDirection.getOrientation(side);
+        if (direction == outputSide) {
+            outputSide = outputSide.getOpposite();
+        } else {
+            outputSide = direction;
+        }
     }
 
     @Override
@@ -37,6 +44,8 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
         final NBTTagCompound outputNbt = new NBTTagCompound();
         outputTank.writeToNBT(outputNbt);
         nbt.setTag("outputTank", outputNbt);
+
+        nbt.setByte("outputSide", (byte) outputSide.ordinal());
     }
 
     @Override
@@ -45,9 +54,10 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
 
         inputTank.readFromNBT(nbt.getCompoundTag("inputTank"));
         outputTank.readFromNBT(nbt.getCompoundTag("outputTank"));
+        outputSide = ForgeDirection.getOrientation(nbt.getByte("outputSide"));
     }
 
-    public void onNeighourChange() {
+    public void onNeighborBlockChange() {
         ticksUntilUpdate = UPDATE_DELAY;
     }
 
@@ -71,16 +81,15 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
         super.updateEntity();
 
         if (outputTank.getFluidAmount() > 0) {
-            TileEntity tileEntity = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
+            final TileEntity tileEntity = worldObj.getTileEntity(xCoord + outputSide.offsetX, yCoord + outputSide.offsetY, zCoord + outputSide.offsetZ);
             if (tileEntity != null && tileEntity instanceof IFluidHandler) {
-                IFluidHandler handler = (IFluidHandler) tileEntity;
-                if (handler.canFill(ForgeDirection.UP, outputTank.getFluid().getFluid())) {
-                    int amount = handler.fill(ForgeDirection.UP, outputTank.getFluid(), false);
+                final IFluidHandler handler = (IFluidHandler) tileEntity;
+                if (handler.canFill(outputSide.getOpposite(), outputTank.getFluid().getFluid())) {
+                    int amount = handler.fill(outputSide.getOpposite(), outputTank.getFluid(), false);
                     if (amount > 0) {
-                        outputTank.drain(handler.fill(ForgeDirection.UP, outputTank.getFluid(), true), true);
+                        outputTank.drain(handler.fill(outputSide.getOpposite(), outputTank.getFluid(), true), true);
                     }
                 }
-
             }
         }
 
@@ -99,14 +108,6 @@ public class SteamWaterCollectorTileEntity extends TileEntity implements IFluidH
             inputTank.drain(STEAM_PER_OPERATION, true);
             outputTank.fill(new FluidStack(FluidRegistry.WATER, WATER_PER_SOURCE * sourceBlockCount), true);
         }
-    }
-
-    public int getWaterAmount() {
-        return outputTank.getFluidAmount();
-    }
-
-    public int getSteamAmount() {
-        return inputTank.getFluidAmount();
     }
 
     @Override
