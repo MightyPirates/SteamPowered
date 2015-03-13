@@ -1,10 +1,7 @@
 package li.cil.sp;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import li.cil.sp.block.BlockSteamWaterCollector;
 import li.cil.sp.block.BlockSteamFluidTransposer;
-import li.cil.sp.tileentity.TileEntitySteamFluidTransposer;
-import li.cil.sp.tileentity.TileEntitySteamWaterCollector;
+import li.cil.sp.block.BlockSteamWaterCollector;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -32,12 +29,4 @@ public class Registry {
             .setBlockName("steamFluidTransposer")
             .setBlockTextureName("steampowered:generic")
             .setCreativeTab(tab);
-
-    public static void init() {
-        GameRegistry.registerTileEntity(TileEntitySteamWaterCollector.class, "steamWaterCollector");
-        GameRegistry.registerBlock(STEAM_WATER_COLLECTOR, "steamWaterCollector");
-
-        GameRegistry.registerTileEntity(TileEntitySteamFluidTransposer.class, "steamFluidTransposer");
-        GameRegistry.registerBlock(STEAM_FLUID_TRANSPOSER, "steamFluidTransposer");
-    }
 }

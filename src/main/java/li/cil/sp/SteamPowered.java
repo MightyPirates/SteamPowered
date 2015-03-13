@@ -7,7 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import li.cil.sp.proxy.Common;
 
-@Mod(modid = SteamPowered.MOD_ID, version = SteamPowered.VERSION, name = SteamPowered.MOD_NAME)
+@Mod(modid = SteamPowered.MOD_ID, version = SteamPowered.VERSION, name = SteamPowered.MOD_NAME, dependencies = "after:gregtech")
 public class SteamPowered {
     public static final String MOD_ID = "steampowered";
     public static final String MOD_NAME = "SteamPowered";
