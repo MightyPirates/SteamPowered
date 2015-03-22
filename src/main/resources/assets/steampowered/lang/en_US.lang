@@ -1,2 +1,3 @@
 tile.steamWaterCollector.name=Water Collector
 tile.steamFluidTransposer.name=Fluid Transposer
+itemGroup.SteamPowered=Steam Powered

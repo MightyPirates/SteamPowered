@@ -109,3 +109,21 @@ idea {
         outputDir = file('build/classes/main')
     }
 }
+repositories {
+    maven {
+        name = "mobius"
+        url = "http://mobiusstrip.eu/maven"
+    }
+    maven { // the repo from which to get NEI and stuff 
+        name 'CB Repo'
+        url "http://chickenbones.net/maven/"
+    }
+}
+ configurations {
+    provided
+    embedded
+    compile.extendsFrom provided, embedded
+}
+dependencies {
+    provided "mcp.mobius.waila:Waila:${config.waila.version}_${config.minecraft.version}:dev"
+}

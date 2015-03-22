@@ -1,6 +1,7 @@
 package li.cil.sp.proxy;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.registry.GameRegistry;
 import li.cil.sp.Registry;
 import li.cil.sp.tileentity.TileEntitySteamFluidTransposer;
@@ -38,6 +39,9 @@ public class Common {
                     'p', Blocks.piston,
                     'c', Items.cauldron);
         }
+            if(Loader.isModLoaded("Waila")){
+                FMLInterModComms.sendMessage("Waila", "register", "li.cil.sp.block.BlockDataProvider.callbackRegister")     ;
+            }
     }
 
     public void onPostInit() {

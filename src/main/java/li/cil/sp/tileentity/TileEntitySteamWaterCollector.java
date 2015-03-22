@@ -44,6 +44,7 @@ public class TileEntitySteamWaterCollector extends TileEntitySteamPowered {
         final NBTTagCompound outputNbt = new NBTTagCompound();
         outputTank.writeToNBT(outputNbt);
         nbt.setTag("outputTank", outputNbt);
+        nbt.setInteger("sourceBlockCount",sourceBlockCount);
 
         nbt.setByte("outputSide", (byte) outputSide.ordinal());
     }
@@ -54,6 +55,7 @@ public class TileEntitySteamWaterCollector extends TileEntitySteamPowered {
 
         outputTank.readFromNBT(nbt.getCompoundTag("outputTank"));
         outputSide = ForgeDirection.getOrientation(nbt.getByte("outputSide"));
+        sourceBlockCount = nbt.getInteger("sourceBlockCount");
     }
 
     public void onNeighborBlockChange() {
@@ -128,5 +130,13 @@ public class TileEntitySteamWaterCollector extends TileEntitySteamPowered {
     @Override
     public FluidTankInfo[] getTankInfo(final ForgeDirection side) {
         return new FluidTankInfo[]{outputTank.getInfo(), steamTank.getInfo()};
+    }
+
+    public int getWaterAmount() {
+        return outputTank.getFluidAmount();
+    }
+
+    public int getWaterPerTick() {
+        return sourceBlockCount * WATER_PER_SOURCE;
     }
 }

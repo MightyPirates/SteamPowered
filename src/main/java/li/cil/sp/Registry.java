@@ -9,10 +9,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 
 public class Registry {
-    public static final CreativeTabs tab = new CreativeTabs(CreativeTabs.getNextID(), "Steam Water Collector") {
+    public static final CreativeTabs tab = new CreativeTabs(CreativeTabs.getNextID(), "SteamPowered") {
         @Override
         public Item getTabIconItem() {
-            return Items.brick;
+            return Item.getItemFromBlock(STEAM_WATER_COLLECTOR);
         }
     };
 
